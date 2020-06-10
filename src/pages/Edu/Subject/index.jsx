@@ -2,32 +2,73 @@ import React,{Component} from "react"
 import { Button ,Table } from 'antd';
 import { PlusOutlined,FormOutlined ,DeleteOutlined} from "@ant-design/icons";
 import "./index.less"
-import { reqGetSubjectList } from "@api/edu/subject";
+// import { reqGetSubjectList } from "@api/edu/subject";
+//redux 方法
+import {connect} from "react-redux"
+import {getSubjectList,getSubSubjectList} from "./redux"
 
-export default class Subject extends Component{
-  //初始化结构
+@connect(
+  state=>({subjectList:state.subjectList}),
+  {
+    getSubjectList,//更新数据的方法
+    getSubSubjectList,
+  }
+)
+class Subject extends Component{
   state={
-    subjects:{
-      total:0,
-      items:[],
-    }
+    expandedRowKeys:[],//展开项
   }
+  //初始化结构
+  // state={
+  //   subjects:{
+  //     total:0,
+  //     items:[],
+  //   }
+  // }
   async componentDidMount(){
-    this.getSubjectList(1,10);
+    // this.getSubjectList(1,10);
+    this.props.getSubjectList(1,10)
   }
-  getSubjectList = async (page,limit)=>{
-    // console.log(page,limit);
-    const result =  await reqGetSubjectList(page,limit);
-    // console.log(result);
-    //更新数据
+  handleExpand=(expanded,record)=>{
+    if(!expanded) return
+    console.log(expanded,record);
+    //请求一级菜单对应的二级菜单的数据
+    this.props.getSubSubjectList(record._id)
+  }
+  handleExpandedRowsChange=(expandedRowKeys)=>{
+    console.log("handleExpandedRowsChange",expandedRowKeys);
+    //长度
+    const length = expandedRowKeys.length;
+    console.log(expandedRowKeys);
+    
+    //如果最新长度大于之前的长度，说明是展开，需要发送请求
+    if(length>this.state.expandedRowKeys.length){
+      //点击后数组会再最后增加一项，如果要要显示刚展开的取数组的最后一项即可
+      const lastKey = expandedRowKeys[length-1];
+      console.log(lastKey,"11");
+      
+      //发送请求，展开二级菜单
+      this.props.getSubSubjectList(lastKey);
+    }
+
+    //跟新数据
     this.setState({
-      subjects:result,
+      expandedRowKeys
     })
   }
-  sizeChange= async (current,size)=>{
-    console.log(current,size);
-    this.getSubjectList(current,size)
-  }
+  // getSubjectList = async (page,limit)=>{
+  //   // console.log(page,limit);
+  //   const result =  await reqGetSubjectList(page,limit);
+  //   // console.log(result);
+  //   //更新数据
+  //   this.setState({
+  //     subjects:result,
+  //   })
+  // }
+  // sizeChange= async (current,size)=>{
+  //   console.log(current,size);
+  //   this.getSubjectList(current,size)
+  // }
   render(){
     const columns = [
       { title: '分类名称', dataIndex: 'title', key: 'title' },
@@ -50,7 +91,7 @@ export default class Subject extends Component{
     ];
     
     //动态数据
-    const {subjects} = this.state
+    // const {subjects} = this.state
     // const data = [
     //   {
     //     key: 1,
@@ -61,7 +102,8 @@ export default class Subject extends Component{
     //   },
       
     // ];
-    
+    const {subjectList,getSubjectList} = this.props;
+    const {expandedRowKeys} = this.state;
     return(
       <div className="subject">
         <Button type="primary" className="subject-btn"><PlusOutlined />新建</Button>
@@ -71,19 +113,40 @@ export default class Subject extends Component{
           //决定列是否可以展开
           //决定列展开时的内容
           expandable={{
-            expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
-            rowExpandable: record => record.name !== 'Not Expandable',
+            expandedRowKeys,
+            onExpandedRowsChange:this.handleExpandedRowsChange,
+            // expandedRowRender: record => {
+            //   //判断有没有children
+            //   const children = record.children?record.children:[];
+            //   return children.map((subSubject)=>{
+            //     return (
+            //       <div key={subSubject._id} className="sub-subject-row">
+            //         <div>{subSubject.title}</div>
+            //         <div className="sub-subject-row-right">
+            //           <Button type="primary">
+            //             <FormOutlined />
+            //           </Button>
+            //           <Button type="danger" className="subject-btn">
+            //             <DeleteOutlined />
+            //           </Button>
+            //         </div>
+            //       </div>
+            //     )
+            //   })
+            // },
+            // rowExpandable: record => record.name !== 'Not Expandable',
+            // onExpand: this.handleExpand,
           }}
-          dataSource={subjects.items} //每行显示的数据
+          dataSource={subjectList.items} //每行显示的数据
           rowKey="_id" //指定key属性的值是_id
           pagination={{
-            total:subjects.total,//数据总数
+            total:subjectList.total,//数据总数
             showQuickJumper:true,//是否显示快速跳转
             showSizeChanger:true,//是否显示修改每页显示数量
             pageSizeOptions:["5","10","15","20"],
             defaultPageSize:10,
-            onChange : this.getSubjectList,//页码发生变化触发的回调
-            onShowSizeChange: this.sizeChange,//数量改变的回调
+            onChange : getSubjectList,//页码发生变化触发的回调
+            onShowSizeChange:getSubjectList,//数量改变的回调
           }}
         />,
         mountNode,
@@ -91,3 +154,5 @@ export default class Subject extends Component{
     )
   }
 }
+
+export default Subject
