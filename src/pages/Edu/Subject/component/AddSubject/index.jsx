@@ -40,6 +40,8 @@ function AddSubject({ subjectList, getSubjectList, history }) {
 
   //工厂函数声明周期，发送请求数据
   useEffect(() => {
+    //每次组件加载都i要重置这个数据
+    page = 1;
     // getSubjectList(page++,10)
     //因为 getSubjectList 的actions在定义时返回的就是一个promise的结果
     const fetchData = async () => {
