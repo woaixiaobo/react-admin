@@ -7,7 +7,8 @@ let app = express();
 const Random = Mock.Random;
 //随机中文标题
 Random.ctitle();
-//app.use()  中间件,代表接受所有请求
+//使用解析POST/PUT请求的请求体参数的中间件
+app.use(express.json())  //中间件,代表接受所有请求
 //使用cors 解决跨域
 app.use((req,res,next)=>{
     //设置响应头:将来作为响应式数据返回给客户端
@@ -16,6 +17,29 @@ app.use((req,res,next)=>{
     res.set("Access-Control-Allow-Methodes","GET,POST,PUT,DELETE");
     next();//触发下一个组件/路由
 })
+
+
+
+
+app.post("/admin/edu/subject/save",(req,res,next)=>{
+  //post请求需要中间插件来获取请求体
+  console.log(req.body);
+
+  const {title,parentId} = req.body;
+
+  //返回响应
+  res.json({
+    code:20000,
+    success:true,
+    data:{
+      _id:Date.now(),
+     
+    },
+    message:"",
+  })
+})
+
+
 //创建路由
 /**
  * request : 请求对象,客户端发给服务器的数据

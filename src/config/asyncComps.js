@@ -20,7 +20,8 @@ const Teacher = () => lazy(() => import("@pages/Edu/Teacher"));
 const Settings = () => lazy(() => import("@pages/User/Settings"));
 const Center = () => lazy(() => import("@pages/User/Center"));
 const Test1 = () => lazy(() => import("@pages/Edu/Test1"));
-
+//subject的add添加页面
+const AddSubject = () => lazy(() => import("@pages/Edu/Subject/component/AddSubject"));
 export default {
   Admin,
   User,
@@ -37,5 +38,6 @@ export default {
   Teacher,
   Settings,
   Center,
-  Test1
+  Test1,
+  AddSubject
 };

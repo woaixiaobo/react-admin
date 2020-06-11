@@ -16,7 +16,7 @@ export const getSubjectList = (page,limit)=>{
         return reqGetSubjectList(page,limit).then(response=>{
             //更新redux的数据
             dispatch(getSubjectListSync(response));
-            return response
+            return response.items
         })
     }
 }
@@ -34,6 +34,8 @@ export const getSubSubjectList=(parentId)=>{
             dispatch(
                 getSubSubjectListSync({parentId,subjectList:response.items})
             )
+            console.log(response.items);
+            
             return response
         })
     }

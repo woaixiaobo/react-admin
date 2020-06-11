@@ -25,6 +25,7 @@ class Subject extends Component{
   //     items:[],
   //   }
   // }
+  //声明周期函数，创建完成之前发送初始请求
   async componentDidMount(){
     // this.getSubjectList(1,10);
     this.props.getSubjectList(1,10)
@@ -35,6 +36,7 @@ class Subject extends Component{
     //请求一级菜单对应的二级菜单的数据
     this.props.getSubSubjectList(record._id)
   }
+  //展开项数量发生变化时触发，参数为展开项的长度，展开增加，缩回减小
   handleExpandedRowsChange=(expandedRowKeys)=>{
     console.log("handleExpandedRowsChange",expandedRowKeys);
     //长度
@@ -44,9 +46,7 @@ class Subject extends Component{
     //如果最新长度大于之前的长度，说明是展开，需要发送请求
     if(length>this.state.expandedRowKeys.length){
       //点击后数组会再最后增加一项，如果要要显示刚展开的取数组的最后一项即可
-      const lastKey = expandedRowKeys[length-1];
-      console.log(lastKey,"11");
-      
+      const lastKey = expandedRowKeys[length-1];      
       //发送请求，展开二级菜单
       this.props.getSubSubjectList(lastKey);
     }
@@ -55,6 +55,9 @@ class Subject extends Component{
     this.setState({
       expandedRowKeys
     })
+  }
+  showAddSubject=()=>{
+    this.props.history.push("/edu/subject/add")
   }
   // getSubjectList = async (page,limit)=>{
   //   // console.log(page,limit);
@@ -106,7 +109,7 @@ class Subject extends Component{
     const {expandedRowKeys} = this.state;
     return(
       <div className="subject">
-        <Button type="primary" className="subject-btn"><PlusOutlined />新建</Button>
+        <Button type="primary" onClick={this.showAddSubject} className="subject-btn"><PlusOutlined />新建</Button>
         <Table
           //决定列头
           columns={columns}
