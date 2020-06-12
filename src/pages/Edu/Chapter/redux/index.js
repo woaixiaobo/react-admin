@@ -1,8 +1,12 @@
 import chapter from "./reducer"
 import {
-    getAllCourseList
+    getAllCourseList,
+    getChapterList,
+    getLessonList
 } from "./actions"
 export {
     chapter,
     getAllCourseList,
+    getChapterList,
+    getLessonList
 }

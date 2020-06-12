@@ -1,4 +1,6 @@
-import { lazy } from "react";
+import {
+  lazy
+} from "react";
 
 const Admin = () => lazy(() => import("@pages/Admin"));
 const User = () => lazy(() => import("@pages/Acl/User"));
@@ -22,6 +24,7 @@ const Center = () => lazy(() => import("@pages/User/Center"));
 const Test1 = () => lazy(() => import("@pages/Edu/Test1"));
 //subject的add添加页面
 const AddSubject = () => lazy(() => import("@pages/Edu/Subject/component/AddSubject"));
+const AddLesson = () => lazy(() => import("@pages/Edu/Chapter/components/AddLesson"));
 export default {
   Admin,
   User,
@@ -39,5 +42,6 @@ export default {
   Settings,
   Center,
   Test1,
-  AddSubject
+  AddSubject,
+  AddLesson
 };

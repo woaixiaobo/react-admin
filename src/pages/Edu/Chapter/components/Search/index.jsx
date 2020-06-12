@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { Form, Select, Button } from "antd";
+import { Form, Select, Button, message } from "antd";
 import "./index.less";
 //引入action当中的请求所有课程数据的方法
-import { getAllCourseList } from "../../redux";
+import { getAllCourseList, getChapterList } from "../../redux";
 import { connect } from "react-redux";
 
 const { Option } = Select;
-function Search({ getAllCourseList, allCourseList }) {
+function Search({ getAllCourseList, allCourseList, getChapterList }) {
   // Form组件提供hooks函数 useForm（只能在工厂函数组件使用，不能在ES6类组件使用）
   // 该函数作用就是提供一个form对象，让我们可以对表单进行各种操作
   const [form] = Form.useForm();
@@ -14,8 +14,11 @@ function Search({ getAllCourseList, allCourseList }) {
     form.resetFields(); //重置所有表单项
     // form.resetFields(['title']);//重置title对象的name表单项
   };
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const onFinish = async ({ courseId }) => {
+    // console.log("Success:", courseId);
+    //发送获取章节列表请求
+    await getChapterList({ page: 1, limit: 10, courseId });
+    message.success("获取章节数据成功");
   };
   useEffect(() => {
     //请求所有课程数据
@@ -32,7 +35,7 @@ function Search({ getAllCourseList, allCourseList }) {
     >
       <Form.Item
         label="选中课程"
-        name="title"
+        name="courseId"
         rules={[{ required: true, message: "请选择课程!" }]}
       >
         <Select placeholder="请选择课程分类" className="chapter-search-select">
@@ -62,5 +65,6 @@ export default connect(
   (state) => ({ allCourseList: state.chapter.allCourseList }),
   {
     getAllCourseList,
+    getChapterList,
   }
 )(Search);
