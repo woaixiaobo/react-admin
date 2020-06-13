@@ -4,6 +4,7 @@ import "./index.less";
 //引入action当中的请求所有课程数据的方法
 import { getAllCourseList, getChapterList } from "../../redux";
 import { connect } from "react-redux";
+import PubSub from "pubsub-js";
 
 const { Option } = Select;
 function Search({ getAllCourseList, allCourseList, getChapterList }) {
@@ -18,6 +19,8 @@ function Search({ getAllCourseList, allCourseList, getChapterList }) {
     // console.log("Success:", courseId);
     //发送获取章节列表请求
     await getChapterList({ page: 1, limit: 10, courseId });
+    //发送数据
+    PubSub.publish("RECIVE_DATA", courseId);
     message.success("获取章节数据成功");
   };
   useEffect(() => {

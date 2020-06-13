@@ -2,6 +2,8 @@ import {
   GET_ALL_COURSE_LIST,
   GET_CHAPTER_LIST,
   GET_LESSON_LIST,
+  BATCH_REMOVE_LESSON_LIST,
+  BATCH_REMOVE_Capters_LIST,
 } from "./constants"
 const initChapter = {
   allCourseList: [],
@@ -46,7 +48,39 @@ export default function chapter(prevState = initChapter, action) {
           })
         }
       }
-      default:
-        return prevState;
+      case BATCH_REMOVE_LESSON_LIST:
+        return {
+          ...prevState,
+          chapters: {
+            total: prevState.chapters.total,
+            items: prevState.chapters.items.map(chapter => {
+              //找到要章节下的课时 children
+              let children = chapter.children;
+              //如果存在才进行删除,不存在就返回
+              if (children && children.length) {
+                //过滤要删除的课时id
+                children = children.filter(
+                  item => action.data.indexOf(item._id) === -1
+                )
+              }
+              return {
+                ...chapter,
+                children,
+              }
+            })
+          }
+        }
+        case BATCH_REMOVE_Capters_LIST:
+          console.log(prevState.chapters.items.filter(chapter => action.data.indexOf(chapter._id) === -1));
+
+          return {
+            ...prevState,
+            chapters: {
+              total: prevState.chapters.total,
+              items: prevState.chapters.items.filter(chapter => action.data.indexOf(chapter._id) === -1)
+            }
+          }
+          default:
+            return prevState;
   }
 }
