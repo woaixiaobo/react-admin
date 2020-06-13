@@ -25,6 +25,10 @@ import {
 import {
   chapter
 } from "@pages/Edu/Chapter/redux"
+import {
+  courseList
+} from "@pages/Edu/Course/redux";
+
 export default combineReducers({
   loading,
   user,
@@ -33,5 +37,6 @@ export default combineReducers({
   roleList,
   menuList,
   subjectList,
-  chapter
+  chapter,
+  courseList
 });
