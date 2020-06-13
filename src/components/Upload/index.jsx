@@ -114,7 +114,7 @@ export default class Upload extends Component {
     };
     //当前对象存储库位于的区域
     const config = {
-      region: qiniuConfig.region, //花呗区域
+      region: qiniuConfig.region, //华北区域
     };
 
     //创建上传文件对象
