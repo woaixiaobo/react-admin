@@ -6,10 +6,14 @@ import { reqGetAllTeacherList } from "@api/edu/teacher";
 import { reqGetAllSubjectList, reqGetSubSubjectList } from "@api/edu/subject";
 import { getCourseList } from "../redux";
 import { connect } from "react-redux";
+//引入国际化
+import { FormattedMessage, useIntl } from "react-intl";
 
 //下拉菜单的option要特殊引入
 const { Option } = Select;
 function SearchForm({ getCourseList, getSearchFormData }) {
+	//国际化,显示标签属性
+	const intl = useIntl();
 	//清空表单数据
 	const [form] = Form.useForm();
 	const resetForm = () => {
@@ -111,11 +115,17 @@ function SearchForm({ getCourseList, getSearchFormData }) {
 	};
 	return (
 		<Form layout="inline" from={form} onFinish={onFinish}>
-			<Form.Item name="title" label="标题">
-				<Input placeholder="课程标题" style={{ width: 250, marginRight: 20 }} />
+			<Form.Item name="title" label={<FormattedMessage id="title" />}>
+				<Input
+					placeholder={intl.formatMessage({ id: "title" })}
+					style={{ width: 250, marginRight: 20 }}
+				/>
 			</Form.Item>
-			<Form.Item name="teacherId" label="讲师">
-				<Select placeholder="课程讲师" style={{ width: 250, marginRight: 20 }}>
+			<Form.Item name="teacherId" label={<FormattedMessage id="teacher" />}>
+				<Select
+					placeholder={intl.formatMessage({ id: "teacher" })}
+					style={{ width: 250, marginRight: 20 }}
+				>
 					{teachers.map((teacher) => {
 						return (
 							<Option key={teacher._id} value={teacher._id}>
@@ -125,13 +135,16 @@ function SearchForm({ getCourseList, getSearchFormData }) {
 					})}
 				</Select>
 			</Form.Item>
-			<Form.Item name="subject" label="分类">
+			<Form.Item name="subject" label={<FormattedMessage id="subject" />}>
 				<Cascader
 					style={{ width: 250, marginRight: 20 }}
 					options={subjects}
 					loadData={loadData}
 					onChange={onChange}
 					changeOnSelect
+					placeholder={intl.formatMessage({
+            id: "subject",
+          })}
 				/>
 			</Form.Item>
 			<Form.Item>
@@ -140,9 +153,11 @@ function SearchForm({ getCourseList, getSearchFormData }) {
 					htmlType="submit"
 					style={{ margin: "0 10px 0 30px" }}
 				>
-					查询
+					{<FormattedMessage id="searchBtn" />}
 				</Button>
-				<Button onClick={resetForm}>重置</Button>
+				<Button onClick={resetForm}>
+					{<FormattedMessage id="resetBtn" />}
+				</Button>
 			</Form.Item>
 		</Form>
 	);
