@@ -50,8 +50,9 @@ class PrimaryLayout extends Component {
 		if (key !== "2") return;
 		this.props.logout().then(() => {
 			localStorage.removeItem("user_token");
-			this.props.resetUser();
+			// this.props.resetUser();
 			this.props.history.replace("/login");
+			window.location.reload();
 		});
 	};
 	onSelect = ({ selectedKeys }) => {
