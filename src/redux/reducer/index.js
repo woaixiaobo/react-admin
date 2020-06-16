@@ -4,7 +4,7 @@ import {
 
 import loading from "./loading";
 import token from "./login";
-
+import lang from "./lang";
 import {
   user
 } from "@comps/Authorized/redux";
