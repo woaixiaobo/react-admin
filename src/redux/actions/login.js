@@ -25,7 +25,7 @@ export const mobileLogin = (mobile, code) => {
 };
 
 //登录账号
-const loginSync = token => ({
+export const loginSync = token => ({
   type: LOGIN_SUCCESS,
   data: token,
 })

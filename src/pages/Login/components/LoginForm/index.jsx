@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 
 import { login, mobileLogin } from "@redux/actions/login";
 import { reqSendCode } from "@api/acl/oauth";
+import { CLIENT_ID } from "@conf/oauth";
 
 const { TabPane } = Tabs;
 const TOTAL_TIME = 10;
@@ -126,7 +127,12 @@ function LoginForm({ login, history, mobileLogin }) {
 			message.success("验证码发送成功");
 		});
 	};
-
+	//github方式登录
+	const goGithub = () => {
+		//点击跳转到github的认证页面
+		//参数: client_id(回调蚕食)
+		window.location.href = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}`;
+	};
 	return (
 		<div width="250px">
 			<Form
@@ -226,7 +232,7 @@ function LoginForm({ login, history, mobileLogin }) {
 						<Form.Item>
 							<div className="login-form-icons">
 								<span>其他登录方式</span>
-								<GithubOutlined className="icons" />
+								<GithubOutlined className="icons" onClick={goGithub} />
 								<WechatOutlined className="icons" />
 								<QqOutlined className="icons" />
 							</div>
