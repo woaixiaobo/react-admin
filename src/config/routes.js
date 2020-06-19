@@ -32,12 +32,13 @@ const constantRoutes = [{
   },
 ]
 //私有路由表,只要登录了就能访问首页
-const defaultRoute = [{
-  title: "首页",
+const defaultRoutes = [{
+  name: "首页",
   path: "/",
   component: "Admin",
+  icon: "home"
 }]
 export {
   constantRoutes,
-  defaultRoute
+  defaultRoutes
 }

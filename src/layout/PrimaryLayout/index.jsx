@@ -9,10 +9,16 @@ import {
 	GlobalOutlined,
 } from "@ant-design/icons";
 import logo from "@assets/images/logo.png";
+import SideMenu from "../SideMenu";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { defaultRoutes } from "@conf/routes";
+import AuthorizedRouter from "@comps/Authorized/AuthorizedRouter";
 
 import "./index.less";
 const { Header, Sider, Content, Footer } = Layout;
-
+@withRouter
+@connect((state) => ({ user: state.user }))
 class index extends Component {
 	state = {
 		collapsed: false,
@@ -25,7 +31,49 @@ class index extends Component {
 	onCollapse = (collapsed) => {
 		this.setState({ collapsed });
 	};
+	//获取当前路由配置
+	getCurrentRoute = (permissionList, pathname) => {
+		for (let i = 0; i < permissionList.length; i++) {
+			//收集一级菜单
+			const route = permissionList[i];
+			//找到点击的对应的一级菜单
+			if (route.path === pathname) {
+				return {
+					...route,
+					children: undefined, //通过children来区分是一级菜单还是二级菜单
+				};
+			}
+			const { children } = route;
+			//找二级菜单
+			if (children && children.length) {
+				for (let j = 0; j < children.length; j++) {
+					//二级菜单
+					const item = children[j];
+					//拼成二级完成的菜单路径（父级菜单+子级菜单路径）
+					const currentPath = route.path + item.path;
+					if (currentPath === pathname) {
+						return {
+							//一级菜单
+							...route,
+							//二级菜单
+							children: item,
+						};
+					}
+				}
+			}
+		}
+	};
 	render() {
+		const {
+			user,
+			location: { pathname },
+		} = this.props;
+		//先找私有的静态路由
+		let currentRoute = this.getCurrentRoute(defaultRoutes, pathname);
+		//没有再找动态的
+		if (!currentRoute) {
+			currentRoute = this.getCurrentRoute(user.permissionList, pathname);
+		}
 		return (
 			<Layout className="layout">
 				{/* 左侧导航 */}
@@ -38,17 +86,7 @@ class index extends Component {
 						<img src={logo} alt="logo" />
 						{!this.state.collapsed && <h1>硅谷教育管理系统</h1>}
 					</div>
-					<Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-						<Menu.Item key="1" icon={<UserOutlined />}>
-							nav 1
-						</Menu.Item>
-						<Menu.Item key="2" icon={<VideoCameraOutlined />}>
-							nav 2
-						</Menu.Item>
-						<Menu.Item key="3" icon={<UploadOutlined />}>
-							nav 3
-						</Menu.Item>
-					</Menu>
+					<SideMenu />
 				</Sider>
 				{/* 右侧布局 */}
 				<Layout className="site-layout">
@@ -72,13 +110,27 @@ class index extends Component {
 					{/* 右侧内容区 */}
 					<Content>
 						<div className="layout-nav">
-							<Breadcrumb>
-								<Breadcrumb.Item>User</Breadcrumb.Item>
-								<Breadcrumb.Item>Bill</Breadcrumb.Item>
-							</Breadcrumb>
-							<h3>User</h3>
+							{/* 如果是二级菜单，不要面包导航 */}
+							{currentRoute.children && (
+								<Breadcrumb>
+									{/* 一级菜单名称 */}
+									<Breadcrumb.Item>{currentRoute.name}</Breadcrumb.Item>
+									{/* 二级菜单名称 */}
+									<Breadcrumb.Item>
+										{currentRoute.children.name}
+									</Breadcrumb.Item>
+								</Breadcrumb>
+							)}
+							<h3>
+								{currentRoute.children
+									? currentRoute.children.name
+									: currentRoute.name}
+							</h3>
 						</div>
-						<div className="layout-content">Bill is a cat.</div>
+						{/* 右侧内容区显示动态路由组件 */}
+						<div className="layout-content">
+							<AuthorizedRouter permissionList={user.permissionList} />
+						</div>
 					</Content>
 					{/* 右边底部 */}
 					<Footer className="layout-footer">

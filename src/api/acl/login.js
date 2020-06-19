@@ -10,6 +10,7 @@ export function getMenu() {
   });
 }
 
+//获取用户信息
 export function getInfo() {
   return request({
     url: `${BASE_URL}/info`,
